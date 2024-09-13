@@ -1,0 +1,147 @@
+import pygame
+import os
+from pygame.locals import *
+import random
+
+pygame.init()
+size = width, height = (950, 900)
+road_w = int(width / 1.3)
+roadline_w = int(width / 80)
+right_lane = width / 1.5 - road_w / 10
+left_lane = width / 2 - road_w / 4
+right1_lane = width / 1.2 - road_w / 10
+left1_lane = width / 2 - road_w / 3
+WHITEBACKGROUND = (255, 255, 255)
+
+screen = pygame.display.set_mode(size)
+pygame.display.set_caption("motocrossgame")
+
+yellow = pygame.image.load(os.path.join('pythongames', 'yellow.jpg'))
+yellow.set_colorkey(WHITEBACKGROUND)
+yellowcross = pygame.transform.scale(yellow, (120, 90))
+yellow_loc = yellowcross.get_rect()
+yellow_loc.center = width / 2 + road_w / 4, height * 0.8
+
+whiiii = pygame.image.load(os.path.join('pythongames', 'whiiii.png'))
+whiiii.set_colorkey(WHITEBACKGROUND)
+whiiiicar = pygame.transform.scale(whiiii, (120, 90))
+whiiii_loc = whiiiicar.get_rect()
+whiiii_loc.topleft = left_lane, -200
+
+orange = pygame.image.load(os.path.join('pythongames', 'orange.png'))
+orange.set_colorkey(WHITEBACKGROUND)
+orangecar = pygame.transform.scale(orange, (50, 90))
+orange_loc = orangecar.get_rect()
+orange_loc.topright = right_lane, -300
+
+red = pygame.image.load(os.path.join('pythongames', 'red.jpg'))
+red.set_colorkey(WHITEBACKGROUND)
+redcar = pygame.transform.scale(red, (120, 90))
+red_loc = red.get_rect()
+red_loc.topright = right1_lane, -400
+
+block = pygame.image.load(os.path.join('pythongames', 'block.png'))
+block.set_colorkey(WHITEBACKGROUND)
+blockcar = pygame.transform.rotate(pygame.transform.scale(block, (70, 90)), 180)
+block_loc = block.get_rect()
+block_loc.center = left1_lane, -500
+
+tree1 = pygame.image.load(os.path.join('pythongames', 'tree1.png'))
+tree1.set_colorkey(WHITEBACKGROUND)
+tree11 = pygame.transform.scale(tree1, (70, 90))
+tree1_loc = tree1.get_rect()
+tree1_loc.center = width / 2 - road_w / 4, height * 0.2
+
+tree3 = pygame.image.load(os.path.join('pythongames', 'tree3.png'))
+tree3.set_colorkey(WHITEBACKGROUND)
+tree33 = pygame.transform.scale(tree3, (70, 90))
+tree3_loc = tree3.get_rect()
+tree3_loc.center = width / 2 - road_w / 4, height * 0.2
+
+tree2 = pygame.image.load(os.path.join('pythongames', 'tree2.png'))
+tree2.set_colorkey(WHITEBACKGROUND)
+tree22 = pygame.transform.scale(tree2, (70, 90))
+tree2_loc = tree2.get_rect()
+tree2_loc.center = width / 2 - road_w / 4, height * 0.2
+
+running = True
+clock = pygame.time.Clock()
+
+while running:
+    for event in pygame.event.get():
+        if event.type == QUIT:
+            running = False
+
+        if event.type == KEYDOWN:
+            if event.key in [K_a, K_LEFT]:
+                yellow_loc = yellow_loc.move([-int(road_w / 2), 0])
+            if event.key in [K_d, K_RIGHT]:
+                yellow_loc = yellow_loc.move([int(road_w / 2), 0])
+
+    if yellow_loc.left < width / 2 - road_w / 2:
+        yellow_loc.left = width / 2 - road_w / 2
+    if yellow_loc.right > width / 2 + road_w / 2:
+        yellow_loc.right = width / 2 + road_w / 2
+
+    block_loc[1] += 1
+    if block_loc[1] > height:
+        block_loc.center = left1_lane, -200
+
+    whiiii_loc[1] += 1
+    if whiiii_loc[1] > height:
+        whiiii_loc.topleft = left_lane, -200
+
+    red_loc[1] += 1
+    if red_loc[1] > height:
+        red_loc.topright = right1_lane, -200
+
+    orange_loc[1] += 1
+    if orange_loc[1] > height:
+        orange_loc.topright = right_lane, -200
+
+    # Check for collisions
+    if yellow_loc.colliderect(block_loc):
+        print('Game Over! You Lose!')
+        gameover = True
+    elif yellow_loc.colliderect(orange_loc):
+        print("Game Over!")
+        gameover = True
+    elif yellow_loc.colliderect(red_loc):
+        print("Game Over!")
+        gameover = True
+    elif yellow_loc.colliderect(block_loc):
+        print("Game Over!")
+        gameover = True
+    elif yellow_loc.colliderect(red_loc):
+        print("Game Over!")
+        gameover = False
+
+
+
+    # Clear the screen
+    screen.fill((60, 220, 0))
+
+    # Draw the road and lines
+    pygame.draw.rect(screen, (50, 50, 50), (width / 2 - road_w / 2, 0, road_w, height))
+    pygame.draw.rect(screen, (255, 240, 60), (width / 2 - roadline_w / 2, 0, roadline_w, height))
+    pygame.draw.rect(screen, (255, 255, 255), (width / 2 - road_w / 2 + roadline_w * 0.5, 0, roadline_w, height))
+    pygame.draw.rect(screen, (255, 255, 255), (width / 2 + road_w / 2 - roadline_w * 1.5, 0, roadline_w, height))
+
+    # Draw cars and objects
+    screen.blit(yellowcross, yellow_loc.topleft)
+    screen.blit(whiiiicar, whiiii_loc.topleft)
+    screen.blit(orangecar, orange_loc.topleft)
+    screen.blit(redcar, red_loc.topright)
+    screen.blit(blockcar, block_loc.topleft)
+    screen.blit(tree11, (25, 100))
+    screen.blit(tree33, (25, 375))
+    screen.blit(tree22, (25, 650))
+    screen.blit(tree11, (850, 100))
+    screen.blit(tree22, (850, 650))
+    screen.blit(tree33, (850, 375))
+
+    # Update the display
+    pygame.display.update()
+    clock.tick(60)  # Cap the frame rate at 60 FPS
+
+pygame.quit()
